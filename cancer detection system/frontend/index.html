@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancer Detection System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🏥 Cancer Detection System</h1>
+                <p class="subtitle">AI-Powered Cancer Detecting system </p>
+                <div class="disclaimer">
+                    <strong>⚠️ DISCLAIMER:</strong> This tool is for educational purposes only and should NOT be used for medical diagnosis. 
+                    Always consult qualified healthcare professionals.
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Status Indicator -->
+            <div class="status-bar" id="statusBar">
+                <span class="status-indicator" id="statusIndicator">●</span>
+                <span id="statusText">Connecting to server...</span>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="tabs">
+                <button class="tab-button active" data-tab="detection">Cancer Detection</button>
+                <button class="tab-button" data-tab="results">Results</button>
+            </div>
+
+            <!-- Cancer Detection Tab -->
+            <div class="tab-content active" id="detection-tab">
+                <h2>Cancer Detection Analysis</h2>
+                
+                <form id="detectionForm" enctype="multipart/form-data">
+                    <!-- Patient Information -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age">Age (years):</label>
+                            <input type="number" id="age" name="age" min="0" max="150" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Gender:</label>
+                            <select id="gender" name="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Report Details -->
+                    <div class="form-group">
+                        <label for="reportDetails">Patient Report / Medical History:</label>
+                        <textarea id="reportDetails" name="reportDetails" 
+                                  placeholder="Enter any relevant medical history, symptoms, or observations..."
+                                  rows="4"></textarea>
+                    </div>
+
+                    <!-- Symptoms Checklist -->
+                    <div class="form-group">
+                        <label>Symptoms Reported:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="symptoms" value="0"> Persistent Cough</label>
+                            <label><input type="checkbox" name="symptoms" value="1"> Chest Pain</label>
+                            <label><input type="checkbox" name="symptoms" value="2"> Fatigue</label>
+                            <label><input type="checkbox" name="symptoms" value="3"> Unexplained Weight Loss</label>
+                            <label><input type="checkbox" name="symptoms" value="4"> Shortness of Breath</label>
+                            <label><input type="checkbox" name="symptoms" value="5"> Other</label>
+                        </div>
+                    </div>
+
+                    <!-- Medical Image Upload -->
+                    <div class="form-group">
+                        <label for="imageFile">📸 Upload Medical Image for Analysis:</label>
+                        <label class="file-input-wrapper" for="imageFile">
+                            <input type="file" id="imageFile" name="image" accept="image/*" required>
+                            <span class="file-input-label">Choose Medical Image (JPG, PNG, GIF, BMP)</span>
+                        </label>
+                        <small>Supported formats: JPG, PNG, GIF, BMP (Max 50MB)</small>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div id="imagePreview" class="image-preview-container" style="display: none;">
+                        <p><strong>Image Preview:</strong></p>
+                        <img id="previewImg" alt="Preview">
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary btn-large">🔍 Analyze Image & Detect Cancer Risk</button>
+                </form>
+            </div>
+
+            <!-- Results Tab -->
+            <div class="tab-content" id="results-tab">
+                <h2>Analysis Results</h2>
+                
+                <div id="resultsContainer" class="results-container" style="display: none;">
+                    <!-- Risk Score -->
+                    <div class="result-card">
+                        <h3>🔬 Cancer Risk Assessment</h3>
+                        <div class="risk-score-display">
+                            <div class="risk-circle" id="riskCircle">
+                                <span id="riskScoreValue">0.00</span>%
+                            </div>
+                            <div class="risk-info">
+                                <p><strong>Estimated Cancer Risk Percentage:</strong> <span id="cancerPercentage" style="font-size: 1.3em; color: #dc2626; font-weight: bold;">0.0%</span></p>
+                                <p><strong>Risk Level:</strong> <span id="riskLevel" class="risk-level">Unknown</span></p>
+                                <p><strong>Confidence Score:</strong> <span id="confidence">0.00</span>%</p>
+                                <p style="font-size: 0.9em; color: #666; margin-top: 10px;">Risk Score: <span id="riskScore">0.00</span> / 1.00</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="result-card">
+                        <h3>Recommendations</h3>
+                        <ul id="recommendations" class="recommendations-list">
+                        </ul>
+                    </div>
+
+                    <!-- Patient Info -->
+                    <div class="result-card">
+                        <h3>Patient Information</h3>
+                        <div id="patientInfo" class="patient-info">
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="result-actions">
+                        <button class="btn btn-secondary" onclick="downloadResults()">📥 Download Report</button>
+                        <button class="btn btn-secondary" onclick="newAnalysis()">🔄 New Analysis</button>
+                    </div>
+                </div>
+
+                <div id="noResults" class="no-results">
+                    <p>No results yet. Perform an analysis to see results here.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Loading Spinner -->
+        <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Analyzing data...</p>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        <div id="alertContainer" class="alert-container">
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Cancer Detection System | Educational Purpose Only</p>
+            <p><small>Always consult healthcare professionals for medical decisions</small></p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
